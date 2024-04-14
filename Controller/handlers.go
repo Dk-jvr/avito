@@ -206,6 +206,55 @@ func AdminBannerProcessing(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 		return
+	case http.MethodGet:
+		vars := mux.Vars(request)
+		bannerIdString := vars["id"]
+		var (
+			response []byte
+			banners  []Components.Banner
+		)
+		bannerId, err := strconv.ParseInt(bannerIdString, 10, 64)
+		if err != nil {
+			writer.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		banners, err = Database.GetOldBanners(bannerId)
+		if err != nil {
+			writer.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if len(banners) == 0 {
+			response, _ = json.Marshal("{}")
+		} else {
+			response, _ = json.Marshal(banners)
+		}
+		writer.Write(response)
+		return
+	}
+}
+
+func ReturningOldBanner(writer http.ResponseWriter, request *http.Request) {
+	var version int64
+	vars := mux.Vars(request)
+	bannerIdString := vars["id"]
+	bannerId, err := strconv.ParseInt(bannerIdString, 10, 64)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	version, err = strconv.ParseInt(vars["version"], 10, 64)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = Database.ReturnOldBanner(version, bannerId)
+	if errors.Is(err, sql.ErrNoRows) {
+		writer.WriteHeader(http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }
 

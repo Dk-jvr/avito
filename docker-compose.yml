@@ -18,12 +18,13 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: pg_banners
+      POSTGRES_INITDB_SCRIPT: /docker-entrypoint-initdb.d/init.sql
     networks:
       - backend
     ports:
       - "5432:5432"
     volumes:
-      - ./init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   tests:
     build: .
     depends_on:

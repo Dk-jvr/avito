@@ -16,6 +16,7 @@ func main() {
 	router.HandleFunc("/user_banner", Controller.UserBanner)
 	router.HandleFunc("/banner", Controller.BannerProcessing)
 	router.HandleFunc("/banner/{id}", Controller.AdminBannerProcessing)
+	router.HandleFunc("/banner/{id}/{version}", Controller.ReturningOldBanner)
 	loginHandler := Controller.UserAuthMiddleware(router)
 
 	log.Fatal(http.ListenAndServe(":8080", loginHandler))

@@ -7,6 +7,7 @@ type (
 		FeatureId       int    `json:"feature_id" validate:"required"`
 		Content         string `json:"content" validate:"required"`
 		IsActive        bool   `json:"is_active" validate:"required"`
+		Version         int    `json:"version"`
 		CreatedAtString string `json:"created_at"`
 		UpdatedAtString string `json:"updated_at"`
 	}
